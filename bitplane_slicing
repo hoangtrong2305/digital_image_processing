@@ -1,0 +1,26 @@
+import numpy as np
+import timeit
+
+from PIL import Image, ImageOps
+
+def bit_plane(img):
+    imgTest = np.array(img, dtype=np.uint8)
+    h, w = imgTest.shape
+    bps = np.unpackbits(imgTest).reshape((h, w, 8))
+    bps = np.flip(bps, axis=2)
+    bps = np.transpose(bps, axes=[2, 0, 1])
+
+    for i in range (0, 8):
+        re = np.uint8(bps[i] * 255.0)
+        imgResult = Image.fromarray(re)
+        imgResult.save(str(i) + '.jpg')
+
+def readAndExe(path_img, level):
+    img = ImageOps.grayscale(Image.open(path_img))
+    bit_plane(img)
+    
+if __name__ == '__main__':
+    start = timeit.timeit()
+    readAndExe(path_img='100.jpg', level=4)
+    end = timeit.timeit()
+    print(end - start)
