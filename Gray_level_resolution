@@ -1,0 +1,18 @@
+import numpy as np
+from PIL import Image, ImageOps
+
+def GrayLevelResolution(img, level):
+    L = 2 ** level
+    normImg = img / 255.0
+    levImg = np.round(normImg * (L-1))
+    recImg = np.uint8(levImg * (255/(L-1)))
+    imgResult = Image.fromarray(recImg)
+    imgResult.show()
+
+def readAndExe(path_img, level):
+    img = ImageOps.grayscale(Image.open(path_img))
+    gray_image = np.asarray(img, dtype=np.uint8)
+    GrayLevelResolution(gray_image, level)
+
+if __name__ == '__main__':
+    readAndExe(path_img='skull.png', level=8)
