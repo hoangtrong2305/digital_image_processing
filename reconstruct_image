@@ -1,0 +1,32 @@
+import numpy as np
+import timeit
+
+from PIL import Image, ImageOps
+
+def img_reconstruct(img):
+    imgTest = np.array(img, dtype=np.uint8)
+    h, w = imgTest.shape
+    bps = np.unpackbits(imgTest).reshape((h, w, 8))
+    bps = np.flip(bps, axis=2)
+    bps = np.transpose(bps, axes=[2, 0, 1])
+
+    max_lev = np.ones(shape=(8, h, w))
+    for i in range(0, 8):
+        max_lev[i] = np.multiply(max_lev[i], 2 ** (i))
+
+    imgOut = np.multiply(bps, max_lev)
+
+    for i in range (0, 8):
+        re = np.uint8(imgOut[i])
+        imgResult = Image.fromarray(re)
+        imgResult.save(str(i) + 'reco.jpg')
+
+def readAndExe(path_img, level):
+    img = ImageOps.grayscale(Image.open(path_img))
+    img_reconstruct(img)
+
+if __name__ == '__main__':
+    start = timeit.timeit()
+    readAndExe(path_img='100.jpg', level=4)
+    end = timeit.timeit()
+    print(end - start)
